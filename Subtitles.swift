@@ -7,6 +7,7 @@
 //
 
 import ObjectiveC
+import MediaPlayer
 import AVKit
 import CoreMedia
 
@@ -59,7 +60,7 @@ public extension AVPlayerViewController {
         parsedPayload = parseSubRip(string)
         
         // Add periodic notifications
-        player?.addPeriodicTimeObserverForInterval(
+        self.player?.addPeriodicTimeObserverForInterval(
             CMTimeMake(1, 60),
             queue: dispatch_get_main_queue(),
             usingBlock: { (time) -> Void in
