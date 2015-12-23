@@ -1,5 +1,5 @@
 <p align="center" >
-<img src="https://raw.github.com/mhergon/AVPlayerViewController-Subtitles/master/assets/logo.png" alt="AFNetworking" title="Logo" width=250>
+<img src="https://raw.github.com/mhergon/AVPlayerViewController-Subtitles/master/assets/logo.png" alt="Logo" title="Logo" width=250>
 </p>
 
 ![issues](https://img.shields.io/github/issues/mhergon/AVPlayerViewController-Subtitles.svg)
@@ -64,7 +64,7 @@ moviePlayer.player?.play()
 
 ## Screenshot
 <p align="center" >
-<img src="https://raw.github.com/mhergon/AVPlayerViewController-Subtitles/master/assets/screenshot.png" alt="Example" title="AFNetworking">
+<img src="https://raw.github.com/mhergon/AVPlayerViewController-Subtitles/master/assets/screenshot.png" alt="Screenshoot" title="Screenshoot">
 </p>
 
 ## Contact
