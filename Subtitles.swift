@@ -123,11 +123,7 @@ public extension AVPlayerViewController {
             // Get groups
             let regexStr = "(?m)(^[0-9]+)([\\s\\S]*?)(?=\n\n)"
             let regex = try NSRegularExpression(pattern: regexStr, options: .CaseInsensitive)
-            
-            let lastIndexStr = String(payload.endIndex)
-            let lastIndexInt = Int(lastIndexStr)
-            
-            let matches = regex.matchesInString(payload, options: NSMatchingOptions(rawValue: 0), range: NSMakeRange(0, lastIndexInt!))
+            let matches = regex.matchesInString(payload, options: NSMatchingOptions(rawValue: 0), range: NSMakeRange(0, payload.characters.count))
             for m in matches {
                 
                 let group = (payload as NSString).substringWithRange(m.range)
