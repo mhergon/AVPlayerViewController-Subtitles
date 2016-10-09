@@ -28,11 +28,11 @@ public extension AVPlayerViewController {
     }
     
     // MARK: - Private properties
-    private var subtitleLabelHeightConstraint: NSLayoutConstraint? {
+    fileprivate var subtitleLabelHeightConstraint: NSLayoutConstraint? {
         get { return objc_getAssociatedObject(self, &AssociatedKeys.SubtitleHeightKey) as? NSLayoutConstraint }
         set (value) { objc_setAssociatedObject(self, &AssociatedKeys.SubtitleHeightKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
-    private var parsedPayload: NSDictionary? {
+    fileprivate var parsedPayload: NSDictionary? {
         get { return objc_getAssociatedObject(self, &AssociatedKeys.PayloadKey) as? NSDictionary }
         set (value) { objc_setAssociatedObject(self, &AssociatedKeys.PayloadKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
@@ -47,9 +47,9 @@ public extension AVPlayerViewController {
         
     }
     
-    func open(file filePath: NSURL, encoding: NSStringEncoding = NSUTF8StringEncoding) {
+    func open(file filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
         
-        let contents = try! String(contentsOfURL: filePath, encoding: encoding)
+        let contents = try! String(contentsOf: filePath, encoding: encoding)
         show(subtitles: contents)
         
     }
@@ -60,10 +60,10 @@ public extension AVPlayerViewController {
         parsedPayload = parseSubRip(string)
         
         // Add periodic notifications
-        self.player?.addPeriodicTimeObserverForInterval(
-            CMTimeMake(1, 60),
-            queue: dispatch_get_main_queue(),
-            usingBlock: { (time) -> Void in
+        self.player?.addPeriodicTimeObserver(
+            forInterval: CMTimeMake(1, 60),
+            queue: DispatchQueue.main,
+            using: { (time) -> Void in
                 
                 // Search && show subtitles
                 self.searchSubtitles(time)
@@ -73,34 +73,34 @@ public extension AVPlayerViewController {
     }
     
     // MARK: - Private methods
-    private func addSubtitleLabel() {
+    fileprivate func addSubtitleLabel() {
         
         guard let _ = subtitleLabel else {
             
             // Label
             subtitleLabel = UILabel()
             subtitleLabel?.translatesAutoresizingMaskIntoConstraints = false
-            subtitleLabel?.backgroundColor = UIColor.clearColor()
-            subtitleLabel?.textAlignment = .Center
+            subtitleLabel?.backgroundColor = UIColor.clear
+            subtitleLabel?.textAlignment = .center
             subtitleLabel?.numberOfLines = 0
-            subtitleLabel?.font = UIFont.boldSystemFontOfSize(UI_USER_INTERFACE_IDIOM() == .Pad ? 40.0 : 22.0)
-            subtitleLabel?.textColor = UIColor.whiteColor()
+            subtitleLabel?.font = UIFont.boldSystemFont(ofSize: UI_USER_INTERFACE_IDIOM() == .pad ? 40.0 : 22.0)
+            subtitleLabel?.textColor = UIColor.white
             subtitleLabel?.numberOfLines = 0;
-            subtitleLabel?.layer.shadowColor = UIColor.blackColor().CGColor
-            subtitleLabel?.layer.shadowOffset = CGSizeMake(1.0, 1.0);
+            subtitleLabel?.layer.shadowColor = UIColor.black.cgColor
+            subtitleLabel?.layer.shadowOffset = CGSize(width: 1.0, height: 1.0);
             subtitleLabel?.layer.shadowOpacity = 0.9;
             subtitleLabel?.layer.shadowRadius = 1.0;
             subtitleLabel?.layer.shouldRasterize = true;
-            subtitleLabel?.layer.rasterizationScale = UIScreen.mainScreen().scale
-            subtitleLabel?.lineBreakMode = .ByWordWrapping
+            subtitleLabel?.layer.rasterizationScale = UIScreen.main.scale
+            subtitleLabel?.lineBreakMode = .byWordWrapping
             contentOverlayView?.addSubview(subtitleLabel!)
             
             // Position
-            var constraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-(20)-[l]-(20)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
+            var constraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(20)-[l]-(20)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
             contentOverlayView?.addConstraints(constraints)
-            constraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[l]-(30)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
+            constraints = NSLayoutConstraint.constraints(withVisualFormat: "V:[l]-(30)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
             contentOverlayView?.addConstraints(constraints)
-            subtitleLabelHeightConstraint = NSLayoutConstraint(item: subtitleLabel!, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute, multiplier: 1.0, constant: 30.0)
+            subtitleLabelHeightConstraint = NSLayoutConstraint(item: subtitleLabel!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: NSLayoutAttribute.notAnAttribute, multiplier: 1.0, constant: 30.0)
             contentOverlayView?.addConstraint(subtitleLabelHeightConstraint!)
             
             return
@@ -109,36 +109,36 @@ public extension AVPlayerViewController {
         
     }
     
-    private func parseSubRip(payload: String) -> NSDictionary? {
+    fileprivate func parseSubRip(_ payload: String) -> NSDictionary? {
         
         do {
             
             // Prepare payload
-            var payload = payload.stringByReplacingOccurrencesOfString("\n\r\n", withString: "\n\n")
-            payload = payload.stringByReplacingOccurrencesOfString("\n\n\n", withString: "\n\n")
+            var payload = payload.replacingOccurrences(of: "\n\r\n", with: "\n\n")
+            payload = payload.replacingOccurrences(of: "\n\n\n", with: "\n\n")
             
             // Parsed dict
             let parsed = NSMutableDictionary()
             
             // Get groups
             let regexStr = "(?m)(^[0-9]+)([\\s\\S]*?)(?=\n\n)"
-            let regex = try NSRegularExpression(pattern: regexStr, options: .CaseInsensitive)
-            let matches = regex.matchesInString(payload, options: NSMatchingOptions(rawValue: 0), range: NSMakeRange(0, payload.characters.count))
+            let regex = try NSRegularExpression(pattern: regexStr, options: .caseInsensitive)
+            let matches = regex.matches(in: payload, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, payload.characters.count))
             for m in matches {
                 
-                let group = (payload as NSString).substringWithRange(m.range)
+                let group = (payload as NSString).substring(with: m.range)
                 
                 // Get index
-                var regex = try NSRegularExpression(pattern: "^[0-9]+", options: .CaseInsensitive)
-                var match = regex.matchesInString(group, options: NSMatchingOptions(rawValue: 0), range: NSMakeRange(0, group.characters.count))
+                var regex = try NSRegularExpression(pattern: "^[0-9]+", options: .caseInsensitive)
+                var match = regex.matches(in: group, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, group.characters.count))
                 guard let i = match.first else {
                     continue
                 }
-                let index = (group as NSString).substringWithRange(i.range)
+                let index = (group as NSString).substring(with: i.range)
                 
                 // Get "from" & "to" time
-                regex = try NSRegularExpression(pattern: "\\d{1,2}:\\d{1,2}:\\d{1,2},\\d{1,3}", options: .CaseInsensitive)
-                match = regex.matchesInString(group, options: NSMatchingOptions(rawValue: 0), range: NSMakeRange(0, group.characters.count))
+                regex = try NSRegularExpression(pattern: "\\d{1,2}:\\d{1,2}:\\d{1,2},\\d{1,3}", options: .caseInsensitive)
+                match = regex.matches(in: group, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, group.characters.count))
                 guard match.count == 2 else {
                     continue
                 }
@@ -146,27 +146,27 @@ public extension AVPlayerViewController {
                     continue
                 }
                 
-                var h: NSTimeInterval = 0.0, m: NSTimeInterval = 0.0, s: NSTimeInterval = 0.0, c: NSTimeInterval = 0.0
+                var h: TimeInterval = 0.0, m: TimeInterval = 0.0, s: TimeInterval = 0.0, c: TimeInterval = 0.0
                 
-                let fromStr = (group as NSString).substringWithRange(from.range)
-                var scanner = NSScanner(string: fromStr)
+                let fromStr = (group as NSString).substring(with: from.range)
+                var scanner = Scanner(string: fromStr)
                 scanner.scanDouble(&h)
-                scanner.scanString(":", intoString: nil)
+                scanner.scanString(":", into: nil)
                 scanner.scanDouble(&m)
-                scanner.scanString(":", intoString: nil)
+                scanner.scanString(":", into: nil)
                 scanner.scanDouble(&s)
-                scanner.scanString(",", intoString: nil)
+                scanner.scanString(",", into: nil)
                 scanner.scanDouble(&c)
                 let fromTime = (h * 3600.0) + (m * 60.0) + s + (c / 1000.0)
                 
-                let toStr = (group as NSString).substringWithRange(to.range)
-                scanner = NSScanner(string: toStr)
+                let toStr = (group as NSString).substring(with: to.range)
+                scanner = Scanner(string: toStr)
                 scanner.scanDouble(&h)
-                scanner.scanString(":", intoString: nil)
+                scanner.scanString(":", into: nil)
                 scanner.scanDouble(&m)
-                scanner.scanString(":", intoString: nil)
+                scanner.scanString(":", into: nil)
                 scanner.scanDouble(&s)
-                scanner.scanString(",", intoString: nil)
+                scanner.scanString(",", into: nil)
                 scanner.scanDouble(&c)
                 let toTime = (h * 3600.0) + (m * 60.0) + s + (c / 1000.0)
                 
@@ -175,7 +175,7 @@ public extension AVPlayerViewController {
                 guard (group as NSString).length - range.length > 0 else {
                     continue
                 }
-                let text = (group as NSString).stringByReplacingCharactersInRange(range, withString: "")
+                let text = (group as NSString).replacingCharacters(in: range, with: "")
                 
                 // Create final object
                 let final = NSMutableDictionary()
@@ -197,14 +197,14 @@ public extension AVPlayerViewController {
         
     }
     
-    private func searchSubtitles(time: CMTime) {
+    fileprivate func searchSubtitles(_ time: CMTime) {
         
         let predicate = NSPredicate(format: "(%f >= %K) AND (%f <= %K)", time.seconds, "from", time.seconds, "to")
         
         guard let values = parsedPayload?.allValues else {
             return
         }
-        guard let result = (values as NSArray).filteredArrayUsingPredicate(predicate).first as? NSDictionary else {
+        guard let result = (values as NSArray).filtered(using: predicate).first as? NSDictionary else {
             subtitleLabel?.text = ""
             return
         }
@@ -213,10 +213,10 @@ public extension AVPlayerViewController {
         }
         
         // Set text
-        label.text = (result["text"] as! String).stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+        label.text = (result["text"] as! String).trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         
         // Adjust size
-        let rect = (label.text! as NSString).boundingRectWithSize(CGSize(width: CGRectGetWidth(label.bounds), height: CGFloat.max), options: .UsesLineFragmentOrigin, attributes: [NSFontAttributeName : label.font!], context: nil)
+        let rect = (label.text! as NSString).boundingRect(with: CGSize(width: label.bounds.width, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName : label.font!], context: nil)
         subtitleLabelHeightConstraint?.constant = rect.size.height + 5.0
         
     }
