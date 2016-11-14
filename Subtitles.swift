@@ -137,7 +137,7 @@ public extension AVPlayerViewController {
                 let index = (group as NSString).substring(with: i.range)
                 
                 // Get "from" & "to" time
-                regex = try NSRegularExpression(pattern: "\\d{1,2}:\\d{1,2}:\\d{1,2},\\d{1,3}", options: .caseInsensitive)
+                regex = try NSRegularExpression(pattern: "\\d{1,2}:\\d{1,2}:\\d{1,2}[.,]\\d{1,3}", options: .caseInsensitive)
                 match = regex.matches(in: group, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, group.characters.count))
                 guard match.count == 2 else {
                     continue
