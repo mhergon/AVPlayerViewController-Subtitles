@@ -121,7 +121,7 @@ public extension AVPlayerViewController {
             let parsed = NSMutableDictionary()
             
             // Get groups
-            let regexStr = "(?m)(^[0-9]+)([\\s\\S]*?)(?=\n\n)"
+            let regexStr = "(\\d+)\\n([\\d:,]+)\\s+-{2}\\>\\s+([\\d:,]+)\\n([\\s\\S]*?(?=\\n{2,}|$))"
             let regex = try NSRegularExpression(pattern: regexStr, options: .caseInsensitive)
             let matches = regex.matches(in: payload, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, payload.characters.count))
             for m in matches {
