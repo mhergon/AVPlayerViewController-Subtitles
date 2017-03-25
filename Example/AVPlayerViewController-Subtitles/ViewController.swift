@@ -10,11 +10,13 @@ import UIKit
 import MediaPlayer
 import AVKit
 
-class ViewController: UIViewController {
 
+class ViewController: UIViewController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -39,7 +41,7 @@ class ViewController: UIViewController {
         
         // Add subtitles
         moviePlayer.addSubtitles().open(file: subtitleURL)
-        moviePlayer.addSubtitles().open(file: subtitleURL, encoding: String.Encoding.utf8)
+        moviePlayer.addSubtitles().open(file: subtitleURL, encoding: .utf8)
         
         // Change text properties
         moviePlayer.subtitleLabel?.textColor = UIColor.red
@@ -48,6 +50,21 @@ class ViewController: UIViewController {
         moviePlayer.player?.play()
         
     }
-
+    
+    func subtitleParser() {
+        
+        // Subtitle file
+        let subtitleFile = Bundle.main.path(forResource: "trailer_720p", ofType: "srt")
+        let subtitleURL = URL(fileURLWithPath: subtitleFile!)
+        
+        // Subtitle parser
+        let parser = Subtitles(file: subtitleURL, encoding: .utf8)
+        
+        // Do something with result
+        let subtitles = parser.searchSubtitles(at: 2.0) // Search subtitle at 2.0 seconds
+        
+    }
+    
+    
 }
 

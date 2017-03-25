@@ -28,12 +28,11 @@ pod "AVPlayerViewController-Subtitles"
 
 | Version | Language  | Minimum iOS Target  |
 |:--------------------:|:---------------------------:|:---------------------------:|
-|          1.1.x         |            Swift 3.0            |            iOS 8            |
+|          1.2.x         |            Swift 3.0            |            iOS 8            |
 |          1.0.x         |            Swift 2.x           |            iOS 8            |
 
 
-### Usage
-
+### Usage with player
 
 ```swift
 import AVPlayerViewControllerSubtitles
@@ -63,10 +62,26 @@ moviePlayer.subtitleLabel?.textColor = UIColor.red
 moviePlayer.player?.play()
 ```
 
-## Screenshot
+#### Screenshot
 <p align="center" >
 <img src="https://raw.github.com/mhergon/AVPlayerViewController-Subtitles/master/assets/screenshot.png" alt="Screenshoot" title="Screenshoot">
 </p>
+
+### Usage without player
+
+From version 1.2 you can search text in the SubRip file or text without need play any file.
+
+```
+// Subtitle file
+let subtitleFile = Bundle.main.path(forResource: "trailer_720p", ofType: "srt")
+let subtitleURL = URL(fileURLWithPath: subtitleFile!)
+
+// Subtitle parser
+let parser = Subtitles(file: subtitleURL, encoding: .utf8)
+
+// Do something with result
+let subtitles = parser.searchSubtitles(at: 2.0) // Search subtitle at 2.0 seconds
+```
 
 ## Contact
 

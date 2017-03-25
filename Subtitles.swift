@@ -19,97 +19,48 @@ private struct AssociatedKeys {
     static var PayloadKey = "PayloadKey"
 }
 
-public extension AVPlayerViewController {
+typealias OutputHandler = (_ text: String, _ time: TimeInterval) -> ()
+
+class Subtitles {
     
-    // MARK: - Public properties
-    var subtitleLabel: UILabel? {
-        get { return objc_getAssociatedObject(self, &AssociatedKeys.SubtitleKey) as? UILabel }
-        set (value) { objc_setAssociatedObject(self, &AssociatedKeys.SubtitleKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
-    }
-    
-    // MARK: - Private properties
-    fileprivate var subtitleLabelHeightConstraint: NSLayoutConstraint? {
-        get { return objc_getAssociatedObject(self, &AssociatedKeys.SubtitleHeightKey) as? NSLayoutConstraint }
-        set (value) { objc_setAssociatedObject(self, &AssociatedKeys.SubtitleHeightKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
-    }
-    fileprivate var parsedPayload: NSDictionary? {
-        get { return objc_getAssociatedObject(self, &AssociatedKeys.PayloadKey) as? NSDictionary }
-        set (value) { objc_setAssociatedObject(self, &AssociatedKeys.PayloadKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
-    }
-    
+    // MARK: - Properties
+    fileprivate var parsedPayload: NSDictionary?
+
     // MARK: - Public methods
-    func addSubtitles() -> Self {
+    init(file filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
         
-        // Create label
-        addSubtitleLabel()
+        // Get string
+        let string = try! String(contentsOf: filePath, encoding: encoding)
         
-        return self
-        
-    }
-    
-    func open(file filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
-        
-        let contents = try! String(contentsOf: filePath, encoding: encoding)
-        show(subtitles: contents)
+        // Parse string
+        parsedPayload = Subtitles.parseSubRip(string)
         
     }
     
-    func show(subtitles string: String) {
+    init(subtitles string: String) {
         
-        // Parse
-        parsedPayload = parseSubRip(string)
+        // Parse string
+        parsedPayload = Subtitles.parseSubRip(string)
         
-        // Add periodic notifications
-        self.player?.addPeriodicTimeObserver(
-            forInterval: CMTimeMake(1, 60),
-            queue: DispatchQueue.main,
-            using: { (time) -> Void in
-                
-                // Search && show subtitles
-                self.searchSubtitles(time)
-                
-        })
+    }
+    
+    /// Search subtitles at time
+    ///
+    /// - Parameter time: Time
+    /// - Returns: String if exists
+    func searchSubtitles(at time: TimeInterval) -> String? {
+        
+        return Subtitles.searchSubtitles(parsedPayload, time)
         
     }
     
     // MARK: - Private methods
-    fileprivate func addSubtitleLabel() {
-        
-        guard let _ = subtitleLabel else {
-            
-            // Label
-            subtitleLabel = UILabel()
-            subtitleLabel?.translatesAutoresizingMaskIntoConstraints = false
-            subtitleLabel?.backgroundColor = UIColor.clear
-            subtitleLabel?.textAlignment = .center
-            subtitleLabel?.numberOfLines = 0
-            subtitleLabel?.font = UIFont.boldSystemFont(ofSize: UI_USER_INTERFACE_IDIOM() == .pad ? 40.0 : 22.0)
-            subtitleLabel?.textColor = UIColor.white
-            subtitleLabel?.numberOfLines = 0;
-            subtitleLabel?.layer.shadowColor = UIColor.black.cgColor
-            subtitleLabel?.layer.shadowOffset = CGSize(width: 1.0, height: 1.0);
-            subtitleLabel?.layer.shadowOpacity = 0.9;
-            subtitleLabel?.layer.shadowRadius = 1.0;
-            subtitleLabel?.layer.shouldRasterize = true;
-            subtitleLabel?.layer.rasterizationScale = UIScreen.main.scale
-            subtitleLabel?.lineBreakMode = .byWordWrapping
-            contentOverlayView?.addSubview(subtitleLabel!)
-            
-            // Position
-            var constraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(20)-[l]-(20)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
-            contentOverlayView?.addConstraints(constraints)
-            constraints = NSLayoutConstraint.constraints(withVisualFormat: "V:[l]-(30)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
-            contentOverlayView?.addConstraints(constraints)
-            subtitleLabelHeightConstraint = NSLayoutConstraint(item: subtitleLabel!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: NSLayoutAttribute.notAnAttribute, multiplier: 1.0, constant: 30.0)
-            contentOverlayView?.addConstraint(subtitleLabelHeightConstraint!)
-            
-            return
-            
-        }
-        
-    }
-    
-    fileprivate func parseSubRip(_ payload: String) -> NSDictionary? {
+
+    /// Subtitle parser
+    ///
+    /// - Parameter payload: Input string
+    /// - Returns: NSDictionary
+    fileprivate static func parseSubRip(_ payload: String) -> NSDictionary? {
         
         do {
             
@@ -186,7 +137,6 @@ public extension AVPlayerViewController {
                 
             }
             
-            print(parsed)
             return parsed
             
         } catch {
@@ -197,27 +147,125 @@ public extension AVPlayerViewController {
         
     }
     
-    fileprivate func searchSubtitles(_ time: CMTime) {
+    /// Search subtitle on time
+    ///
+    /// - Parameters:
+    ///   - payload: Inout payload
+    ///   - time: Time
+    /// - Returns: String
+    fileprivate static func searchSubtitles(_ payload: NSDictionary?, _ time: TimeInterval) -> String? {
         
-        let predicate = NSPredicate(format: "(%f >= %K) AND (%f <= %K)", time.seconds, "from", time.seconds, "to")
+        let predicate = NSPredicate(format: "(%f >= %K) AND (%f <= %K)", time, "from", time, "to")
         
-        guard let values = parsedPayload?.allValues else {
-            return
+        guard let values = payload?.allValues, let result = (values as NSArray).filtered(using: predicate).first as? NSDictionary else {
+            return nil
         }
-        guard let result = (values as NSArray).filtered(using: predicate).first as? NSDictionary else {
-            subtitleLabel?.text = ""
-            return
-        }
-        guard let label = subtitleLabel else {
-            return
+        
+        guard let text = result.value(forKey: "text") as? String else {
+            return nil
         }
         
-        // Set text
-        label.text = (result["text"] as! String).trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        return text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         
-        // Adjust size
-        let rect = (label.text! as NSString).boundingRect(with: CGSize(width: label.bounds.width, height: CGFloat.greatestFiniteMagnitude), options: .usesLineFragmentOrigin, attributes: [NSFontAttributeName : label.font!], context: nil)
-        subtitleLabelHeightConstraint?.constant = rect.size.height + 5.0
+    }
+    
+}
+
+public extension AVPlayerViewController {
+    
+    // MARK: - Public properties
+    var subtitleLabel: UILabel? {
+        get { return objc_getAssociatedObject(self, &AssociatedKeys.SubtitleKey) as? UILabel }
+        set (value) { objc_setAssociatedObject(self, &AssociatedKeys.SubtitleKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    
+    // MARK: - Private properties
+    fileprivate var subtitleLabelHeightConstraint: NSLayoutConstraint? {
+        get { return objc_getAssociatedObject(self, &AssociatedKeys.SubtitleHeightKey) as? NSLayoutConstraint }
+        set (value) { objc_setAssociatedObject(self, &AssociatedKeys.SubtitleHeightKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    fileprivate var parsedPayload: NSDictionary? {
+        get { return objc_getAssociatedObject(self, &AssociatedKeys.PayloadKey) as? NSDictionary }
+        set (value) { objc_setAssociatedObject(self, &AssociatedKeys.PayloadKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    
+    // MARK: - Public methods
+    func addSubtitles() -> Self {
+        
+        // Create label
+        addSubtitleLabel()
+        
+        return self
+        
+    }
+    
+    func open(file filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
+        
+        let contents = try! String(contentsOf: filePath, encoding: encoding)
+        show(subtitles: contents)
+        
+    }
+    
+    func show(subtitles string: String) {
+        
+        // Parse
+        parsedPayload = Subtitles.parseSubRip(string)
+        
+        // Add periodic notifications
+        self.player?.addPeriodicTimeObserver(
+            forInterval: CMTimeMake(1, 60),
+            queue: DispatchQueue.main,
+            using: { [weak self] (time) -> Void in
+                
+                guard let strongSelf = self else { return }
+                guard let label = strongSelf.subtitleLabel else { return }
+                
+                // Search && show subtitles
+                label.text = Subtitles.searchSubtitles(strongSelf.parsedPayload, time.seconds)
+                
+                // Adjust size
+                let baseSize = CGSize(width: label.bounds.width, height: CGFloat.greatestFiniteMagnitude)
+                let rect = label.sizeThatFits(baseSize)
+                strongSelf.subtitleLabelHeightConstraint?.constant = rect.height + 5.0
+                
+        })
+        
+    }
+    
+    // MARK: - Private methods
+    fileprivate func addSubtitleLabel() {
+        
+        guard let _ = subtitleLabel else {
+            
+            // Label
+            subtitleLabel = UILabel()
+            subtitleLabel?.translatesAutoresizingMaskIntoConstraints = false
+            subtitleLabel?.backgroundColor = UIColor.clear
+            subtitleLabel?.textAlignment = .center
+            subtitleLabel?.numberOfLines = 0
+            subtitleLabel?.font = UIFont.boldSystemFont(ofSize: UI_USER_INTERFACE_IDIOM() == .pad ? 40.0 : 22.0)
+            subtitleLabel?.textColor = UIColor.white
+            subtitleLabel?.numberOfLines = 0;
+            subtitleLabel?.layer.shadowColor = UIColor.black.cgColor
+            subtitleLabel?.layer.shadowOffset = CGSize(width: 1.0, height: 1.0);
+            subtitleLabel?.layer.shadowOpacity = 0.9;
+            subtitleLabel?.layer.shadowRadius = 1.0;
+            subtitleLabel?.layer.shouldRasterize = true;
+            subtitleLabel?.layer.rasterizationScale = UIScreen.main.scale
+            subtitleLabel?.lineBreakMode = .byWordWrapping
+            contentOverlayView?.addSubview(subtitleLabel!)
+            
+            // Position
+            var constraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(20)-[l]-(20)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
+            contentOverlayView?.addConstraints(constraints)
+            constraints = NSLayoutConstraint.constraints(withVisualFormat: "V:[l]-(30)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
+            contentOverlayView?.addConstraints(constraints)
+            subtitleLabelHeightConstraint = NSLayoutConstraint(item: subtitleLabel!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: NSLayoutAttribute.notAnAttribute, multiplier: 1.0, constant: 30.0)
+            contentOverlayView?.addConstraint(subtitleLabelHeightConstraint!)
+            
+            return
+            
+        }
         
     }
     
