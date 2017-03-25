@@ -19,15 +19,13 @@ private struct AssociatedKeys {
     static var PayloadKey = "PayloadKey"
 }
 
-typealias OutputHandler = (_ text: String, _ time: TimeInterval) -> ()
-
-class Subtitles {
+public class Subtitles {
     
     // MARK: - Properties
     fileprivate var parsedPayload: NSDictionary?
 
     // MARK: - Public methods
-    init(file filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
+    public init(file filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
         
         // Get string
         let string = try! String(contentsOf: filePath, encoding: encoding)
@@ -37,7 +35,7 @@ class Subtitles {
         
     }
     
-    init(subtitles string: String) {
+    public init(subtitles string: String) {
         
         // Parse string
         parsedPayload = Subtitles.parseSubRip(string)
@@ -48,7 +46,7 @@ class Subtitles {
     ///
     /// - Parameter time: Time
     /// - Returns: String if exists
-    func searchSubtitles(at time: TimeInterval) -> String? {
+    public func searchSubtitles(at time: TimeInterval) -> String? {
         
         return Subtitles.searchSubtitles(parsedPayload, time)
         

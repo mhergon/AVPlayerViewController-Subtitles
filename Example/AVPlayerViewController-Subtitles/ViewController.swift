@@ -10,7 +10,6 @@ import UIKit
 import MediaPlayer
 import AVKit
 
-
 class ViewController: UIViewController {
     
     override func viewDidLoad() {
@@ -64,7 +63,6 @@ class ViewController: UIViewController {
         let subtitles = parser.searchSubtitles(at: 2.0) // Search subtitle at 2.0 seconds
         
     }
-    
     
 }
 
