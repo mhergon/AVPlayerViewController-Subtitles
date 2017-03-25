@@ -95,4 +95,4 @@ let subtitles = parser.searchSubtitles(at: 2.0) // Search subtitle at 2.0 second
 
 Licensed under Apache License v2.0.
 <br>
-Copyright 2015-2016 Marc Hervera.
+Copyright 2017 Marc Hervera.
