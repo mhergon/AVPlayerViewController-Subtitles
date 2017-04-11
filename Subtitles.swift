@@ -65,6 +65,7 @@ public class Subtitles {
             // Prepare payload
             var payload = payload.replacingOccurrences(of: "\n\r\n", with: "\n\n")
             payload = payload.replacingOccurrences(of: "\n\n\n", with: "\n\n")
+            payload = payload.replacingOccurrences(of: "\r\n", with: "\n")
             
             // Parsed dict
             let parsed = NSMutableDictionary()
