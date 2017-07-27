@@ -225,7 +225,12 @@ public extension AVPlayerViewController {
                 // Adjust size
                 let baseSize = CGSize(width: label.bounds.width, height: CGFloat.greatestFiniteMagnitude)
                 let rect = label.sizeThatFits(baseSize)
-                strongSelf.subtitleLabelHeightConstraint?.constant = rect.height + 5.0
+                if label.text != nil {
+                    strongSelf.subtitleLabelHeightConstraint?.constant = rect.height + 5.0
+                } else {
+                    strongSelf.subtitleLabelHeightConstraint?.constant = rect.height
+                }
+                
                 
         })
         
