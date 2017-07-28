@@ -209,7 +209,19 @@ public extension AVPlayerViewController {
         
         // Parse
         parsedPayload = Subtitles.parseSubRip(string)
+        addPeriodicNotification(parsedPayload: parsedPayload!)
         
+    }
+    
+    func showByDictionary(dictionaryContent: NSMutableDictionary) {
+        
+        // Add Dictionary content direct to Payload
+        parsedPayload = dictionaryContent
+        addPeriodicNotification(parsedPayload: parsedPayload!)
+        
+    }
+    
+    func addPeriodicNotification(parsedPayload: NSDictionary) {
         // Add periodic notifications
         self.player?.addPeriodicTimeObserver(
             forInterval: CMTimeMake(1, 60),
@@ -231,10 +243,10 @@ public extension AVPlayerViewController {
                     strongSelf.subtitleLabelHeightConstraint?.constant = rect.height
                 }
                 
-                
         })
         
     }
+
     
     // MARK: - Private methods
     fileprivate func addSubtitleLabel() {
