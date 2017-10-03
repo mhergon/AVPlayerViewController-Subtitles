@@ -23,7 +23,7 @@ public class Subtitles {
     
     // MARK: - Properties
     fileprivate var parsedPayload: NSDictionary?
-
+    
     // MARK: - Public methods
     public init(file filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
         
@@ -53,7 +53,7 @@ public class Subtitles {
     }
     
     // MARK: - Private methods
-
+    
     /// Subtitle parser
     ///
     /// - Parameter payload: Input string
@@ -198,12 +198,42 @@ public extension AVPlayerViewController {
         
     }
     
-    func open(file filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
+    func open(fileFromLocal filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
         
         let contents = try! String(contentsOf: filePath, encoding: encoding)
         show(subtitles: contents)
-        
     }
+    
+    func open(fileFromRemote filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
+        
+        
+        subtitleLabel?.text = "..."
+        URLSession.shared.dataTask(with: filePath, completionHandler: { (data, response, error) -> Void in
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                let statusCode = httpResponse.statusCode
+                
+                //Check status code
+                if statusCode != 200 {
+                    NSLog("Subtitle Error: \(httpResponse.statusCode) - \(error?.localizedDescription ?? "")")
+                    return
+                }
+            }
+            // Update UI elements on main thread
+            DispatchQueue.main.async(execute: {
+                self.subtitleLabel?.text = ""
+                
+                if let checkData = data as Data? {
+                    if let contents = String(data: checkData, encoding: encoding) {
+                        self.show(subtitles: contents)
+                    }
+                }
+                
+            })
+        }).resume()
+    }
+    
+    
     
     func show(subtitles string: String) {
         
@@ -236,7 +266,6 @@ public extension AVPlayerViewController {
         
     }
     
-    // MARK: - Private methods
     fileprivate func addSubtitleLabel() {
         
         guard let _ = subtitleLabel else {
