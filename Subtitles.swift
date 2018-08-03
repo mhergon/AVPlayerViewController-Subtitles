@@ -19,8 +19,8 @@ private struct AssociatedKeys {
     static var PayloadKey = "PayloadKey"
 }
 
-public class Subtitles {
-    
+@objc public class Subtitles : NSObject {
+
     // MARK: - Properties
     fileprivate var parsedPayload: NSDictionary?
 
