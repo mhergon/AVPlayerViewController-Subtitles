@@ -212,7 +212,7 @@ public extension AVPlayerViewController {
         
         // Add periodic notifications
         self.player?.addPeriodicTimeObserver(
-            forInterval: CMTimeMake(1, 60),
+            forInterval: CMTimeMake(value: 1, timescale: 60),
             queue: DispatchQueue.main,
             using: { [weak self] (time) -> Void in
                 
@@ -260,11 +260,11 @@ public extension AVPlayerViewController {
             contentOverlayView?.addSubview(subtitleLabel!)
             
             // Position
-            var constraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(20)-[l]-(20)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
+            var constraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(20)-[l]-(20)-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
             contentOverlayView?.addConstraints(constraints)
-            constraints = NSLayoutConstraint.constraints(withVisualFormat: "V:[l]-(30)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
+            constraints = NSLayoutConstraint.constraints(withVisualFormat: "V:[l]-(30)-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
             contentOverlayView?.addConstraints(constraints)
-            subtitleLabelHeightConstraint = NSLayoutConstraint(item: subtitleLabel!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: NSLayoutAttribute.notAnAttribute, multiplier: 1.0, constant: 30.0)
+            subtitleLabelHeightConstraint = NSLayoutConstraint(item: subtitleLabel!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1.0, constant: 30.0)
             contentOverlayView?.addConstraint(subtitleLabelHeightConstraint!)
             
             return
