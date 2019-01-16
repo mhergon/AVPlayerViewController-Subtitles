@@ -7,7 +7,7 @@ Pod::Spec.new do |spec|
   spec.homepage         = 'https://github.com/mhergon/AVPlayerViewController-Subtitles'
   spec.authors          = { 'Marc Hervera' => 'mhergon@gmail.com' }
   spec.summary          = 'Subtitles made easy'
-  spec.source           = { :git => 'https://github.com/mhergon/AVPlayerViewController-Subtitles.git', :tag => 'v1.2.3' }
+  spec.source           = { :git => 'https://github.com/mhergon/AVPlayerViewController-Subtitles.git', :tag => 'v1.3.0' }
   spec.source_files     = 'Subtitles.swift'
   spec.requires_arc     = true
   spec.module_name      = 'AVPlayerViewControllerSubtitles'
