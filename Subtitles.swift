@@ -23,7 +23,7 @@ private struct AssociatedKeys {
 
     // MARK: - Properties
     fileprivate var parsedPayload: NSDictionary?
-
+    
     // MARK: - Public methods
     public init(file filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
         
@@ -53,7 +53,7 @@ private struct AssociatedKeys {
     }
     
     // MARK: - Private methods
-
+    
     /// Subtitle parser
     ///
     /// - Parameter payload: Input string
@@ -73,14 +73,14 @@ private struct AssociatedKeys {
             // Get groups
             let regexStr = "(\\d+)\\n([\\d:,.]+)\\s+-{2}\\>\\s+([\\d:,.]+)\\n([\\s\\S]*?(?=\\n{2,}|$))"
             let regex = try NSRegularExpression(pattern: regexStr, options: .caseInsensitive)
-            let matches = regex.matches(in: payload, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, payload.characters.count))
+            let matches = regex.matches(in: payload, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, payload.count))
             for m in matches {
                 
                 let group = (payload as NSString).substring(with: m.range)
                 
                 // Get index
                 var regex = try NSRegularExpression(pattern: "^[0-9]+", options: .caseInsensitive)
-                var match = regex.matches(in: group, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, group.characters.count))
+                var match = regex.matches(in: group, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, group.count))
                 guard let i = match.first else {
                     continue
                 }
@@ -88,7 +88,7 @@ private struct AssociatedKeys {
                 
                 // Get "from" & "to" time
                 regex = try NSRegularExpression(pattern: "\\d{1,2}:\\d{1,2}:\\d{1,2}[,.]\\d{1,3}", options: .caseInsensitive)
-                match = regex.matches(in: group, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, group.characters.count))
+                match = regex.matches(in: group, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, group.count))
                 guard match.count == 2 else {
                     continue
                 }
@@ -198,21 +198,63 @@ public extension AVPlayerViewController {
         
     }
     
-    func open(file filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
+    func open(fileFromLocal filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
         
         let contents = try! String(contentsOf: filePath, encoding: encoding)
         show(subtitles: contents)
-        
     }
+    
+    func open(fileFromRemote filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
+        
+        
+        subtitleLabel?.text = "..."
+        URLSession.shared.dataTask(with: filePath, completionHandler: { (data, response, error) -> Void in
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                let statusCode = httpResponse.statusCode
+                
+                //Check status code
+                if statusCode != 200 {
+                    NSLog("Subtitle Error: \(httpResponse.statusCode) - \(error?.localizedDescription ?? "")")
+                    return
+                }
+            }
+            // Update UI elements on main thread
+            DispatchQueue.main.async(execute: {
+                self.subtitleLabel?.text = ""
+                
+                if let checkData = data as Data? {
+                    if let contents = String(data: checkData, encoding: encoding) {
+                        self.show(subtitles: contents)
+                    }
+                }
+                
+            })
+        }).resume()
+    }
+    
+    
     
     func show(subtitles string: String) {
         
         // Parse
         parsedPayload = Subtitles.parseSubRip(string)
+        addPeriodicNotification(parsedPayload: parsedPayload!)
         
+    }
+    
+    func showByDictionary(dictionaryContent: NSMutableDictionary) {
+        
+        // Add Dictionary content direct to Payload
+        parsedPayload = dictionaryContent
+        addPeriodicNotification(parsedPayload: parsedPayload!)
+        
+    }
+    
+    func addPeriodicNotification(parsedPayload: NSDictionary) {
         // Add periodic notifications
         self.player?.addPeriodicTimeObserver(
-            forInterval: CMTimeMake(1, 60),
+            forInterval: CMTimeMake(value: 1, timescale: 60),
             queue: DispatchQueue.main,
             using: { [weak self] (time) -> Void in
                 
@@ -231,12 +273,11 @@ public extension AVPlayerViewController {
                     strongSelf.subtitleLabelHeightConstraint?.constant = rect.height
                 }
                 
-                
         })
         
     }
+
     
-    // MARK: - Private methods
     fileprivate func addSubtitleLabel() {
         
         guard let _ = subtitleLabel else {
@@ -260,11 +301,11 @@ public extension AVPlayerViewController {
             contentOverlayView?.addSubview(subtitleLabel!)
             
             // Position
-            var constraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(20)-[l]-(20)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
+            var constraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|-(20)-[l]-(20)-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
             contentOverlayView?.addConstraints(constraints)
-            constraints = NSLayoutConstraint.constraints(withVisualFormat: "V:[l]-(30)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
+            constraints = NSLayoutConstraint.constraints(withVisualFormat: "V:[l]-(30)-|", options: NSLayoutConstraint.FormatOptions(rawValue: 0), metrics: nil, views: ["l" : subtitleLabel!])
             contentOverlayView?.addConstraints(constraints)
-            subtitleLabelHeightConstraint = NSLayoutConstraint(item: subtitleLabel!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: NSLayoutAttribute.notAnAttribute, multiplier: 1.0, constant: 30.0)
+            subtitleLabelHeightConstraint = NSLayoutConstraint(item: subtitleLabel!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1.0, constant: 30.0)
             contentOverlayView?.addConstraint(subtitleLabelHeightConstraint!)
             
             return
