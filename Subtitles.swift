@@ -35,7 +35,7 @@ private struct AssociatedKeys {
         
     }
     
-    public init(subtitles string: String) {
+ @objc public init(subtitles string: String) {
         
         // Parse string
         parsedPayload = Subtitles.parseSubRip(string)
@@ -46,7 +46,7 @@ private struct AssociatedKeys {
     ///
     /// - Parameter time: Time
     /// - Returns: String if exists
-    public func searchSubtitles(at time: TimeInterval) -> String? {
+ @objc public func searchSubtitles(at time: TimeInterval) -> String? {
         
         return Subtitles.searchSubtitles(parsedPayload, time)
         
