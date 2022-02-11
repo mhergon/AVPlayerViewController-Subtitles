@@ -17,7 +17,7 @@ AVPlayerViewController-Subtitles is a library to display subtitles on iOS. It's 
 
 ```ruby
 platform :ios, '8.0'
-pod "AVPlayerViewController-Subtitles"
+pod 'AVPlayerViewController-Subtitles'
 ```
 
 ### Manually installation
