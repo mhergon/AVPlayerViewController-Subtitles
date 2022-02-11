@@ -11,7 +11,7 @@ import AVKit
 
 class ViewController: UIViewController {
     
-    //MARK:- Actions
+    // MARK: - Actions
     
     @IBAction func showVideo(_ sender: UIButton) {
         // Video file
@@ -34,7 +34,8 @@ class ViewController: UIViewController {
 //        moviePlayer.addSubtitles().open(fileFromLocal: subtitleURL, encoding: .utf8)
         
         // Add subtitles - remote
-        moviePlayer.addSubtitles().open(fileFromRemote: subtitleRemoteUrl!)
+        moviePlayer.addSubtitles()
+        moviePlayer.open(fileFromRemote: subtitleRemoteUrl!)
         
         // Change text properties
         moviePlayer.subtitleLabel?.textColor = UIColor.red
@@ -49,10 +50,10 @@ class ViewController: UIViewController {
         let subtitleURL = URL(fileURLWithPath: subtitleFile!)
         
         // Subtitle parser
-        let parser = Subtitles(file: subtitleURL, encoding: .utf8)
+        let parser = try? Subtitles(file: subtitleURL, encoding: .utf8)
         
         // Do something with result
-        _ = parser.searchSubtitles(at: 2.0) // Search subtitle at 2.0 seconds
+        _ = parser?.searchSubtitles(at: 2.0) // Search subtitle at 2.0 seconds
     }
     
 }
