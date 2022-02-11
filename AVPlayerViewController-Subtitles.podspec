@@ -12,5 +12,5 @@ Pod::Spec.new do |spec|
   spec.requires_arc     = true
   spec.module_name      = 'AVPlayerViewControllerSubtitles'
   spec.framework        = 'MediaPlayer'
-  spec.swift_version	= '4.2'
+  spec.swift_version	= '5.0'
 end
