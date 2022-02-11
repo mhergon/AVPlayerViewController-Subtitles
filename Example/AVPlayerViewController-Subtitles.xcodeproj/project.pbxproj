@@ -15,6 +15,7 @@
 		4B4FC9731C2A9DB5002AE636 /* trailer_720p.mov in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FC9711C2A9DB5002AE636 /* trailer_720p.mov */; };
 		4B4FC9741C2A9DB5002AE636 /* trailer_720p.srt in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FC9721C2A9DB5002AE636 /* trailer_720p.srt */; };
 		4B7F8DFC1C2A9F6D00DC949D /* Subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7F8DFB1C2A9F6D00DC949D /* Subtitles.swift */; };
+		6C859D2427B703C7005ACCF8 /* AVPlayerViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C859D2327B703C7005ACCF8 /* AVPlayerViewControllerExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		4B4FC9711C2A9DB5002AE636 /* trailer_720p.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = trailer_720p.mov; sourceTree = "<group>"; };
 		4B4FC9721C2A9DB5002AE636 /* trailer_720p.srt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = trailer_720p.srt; sourceTree = "<group>"; };
 		4B7F8DFB1C2A9F6D00DC949D /* Subtitles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Subtitles.swift; path = ../../Subtitles.swift; sourceTree = "<group>"; };
+		6C859D2327B703C7005ACCF8 /* AVPlayerViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVPlayerViewControllerExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				4B7F8DFB1C2A9F6D00DC949D /* Subtitles.swift */,
+				6C859D2327B703C7005ACCF8 /* AVPlayerViewControllerExtension.swift */,
 			);
 			name = "AVPlayerViewController-Subtitles";
 			sourceTree = "<group>";
@@ -164,6 +167,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C859D2427B703C7005ACCF8 /* AVPlayerViewControllerExtension.swift in Sources */,
 				4B7F8DFC1C2A9F6D00DC949D /* Subtitles.swift in Sources */,
 				4B4FC96D1C2A9D91002AE636 /* ViewController.swift in Sources */,
 				4B4FC95A1C2A9D60002AE636 /* AppDelegate.swift in Sources */,
