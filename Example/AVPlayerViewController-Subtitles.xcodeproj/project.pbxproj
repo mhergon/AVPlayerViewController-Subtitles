@@ -14,7 +14,8 @@
 		4B4FC96E1C2A9D91002AE636 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FC96C1C2A9D91002AE636 /* Main.storyboard */; };
 		4B4FC9731C2A9DB5002AE636 /* trailer_720p.mov in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FC9711C2A9DB5002AE636 /* trailer_720p.mov */; };
 		4B4FC9741C2A9DB5002AE636 /* trailer_720p.srt in Resources */ = {isa = PBXBuildFile; fileRef = 4B4FC9721C2A9DB5002AE636 /* trailer_720p.srt */; };
-		4B7F8DFC1C2A9F6D00DC949D /* Subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7F8DFB1C2A9F6D00DC949D /* Subtitles.swift */; };
+		6C859D2B27B705CF005ACCF8 /* Subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C859D2927B705CF005ACCF8 /* Subtitles.swift */; };
+		6C859D2C27B705CF005ACCF8 /* AVPlayerViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C859D2A27B705CF005ACCF8 /* AVPlayerViewControllerExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +28,8 @@
 		4B4FC96C1C2A9D91002AE636 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		4B4FC9711C2A9DB5002AE636 /* trailer_720p.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = trailer_720p.mov; sourceTree = "<group>"; };
 		4B4FC9721C2A9DB5002AE636 /* trailer_720p.srt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = trailer_720p.srt; sourceTree = "<group>"; };
-		4B7F8DFB1C2A9F6D00DC949D /* Subtitles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Subtitles.swift; path = ../../Subtitles.swift; sourceTree = "<group>"; };
+		6C859D2927B705CF005ACCF8 /* Subtitles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Subtitles.swift; path = ../../Source/Subtitles.swift; sourceTree = "<group>"; };
+		6C859D2A27B705CF005ACCF8 /* AVPlayerViewControllerExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AVPlayerViewControllerExtension.swift; path = ../../Source/AVPlayerViewControllerExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,7 +77,8 @@
 		4B4FC96F1C2A9DAA002AE636 /* AVPlayerViewController-Subtitles */ = {
 			isa = PBXGroup;
 			children = (
-				4B7F8DFB1C2A9F6D00DC949D /* Subtitles.swift */,
+				6C859D2A27B705CF005ACCF8 /* AVPlayerViewControllerExtension.swift */,
+				6C859D2927B705CF005ACCF8 /* Subtitles.swift */,
 			);
 			name = "AVPlayerViewController-Subtitles";
 			sourceTree = "<group>";
@@ -116,12 +119,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = "Marc Hervera";
 				TargetAttributes = {
 					4B4FC9551C2A9D60002AE636 = {
 						CreatedOnToolsVersion = 7.2;
-						LastSwiftMigration = 1010;
+						LastSwiftMigration = 1320;
 					};
 				};
 			};
@@ -130,6 +133,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -163,7 +167,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B7F8DFC1C2A9F6D00DC949D /* Subtitles.swift in Sources */,
+				6C859D2C27B705CF005ACCF8 /* AVPlayerViewControllerExtension.swift in Sources */,
+				6C859D2B27B705CF005ACCF8 /* Subtitles.swift in Sources */,
 				4B4FC96D1C2A9D91002AE636 /* ViewController.swift in Sources */,
 				4B4FC95A1C2A9D60002AE636 /* AppDelegate.swift in Sources */,
 			);
@@ -187,6 +192,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -205,6 +211,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -241,6 +248,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -259,6 +267,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -294,7 +303,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -307,7 +316,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
