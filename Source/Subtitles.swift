@@ -89,24 +89,45 @@ extension Subtitles {
             
             let fromStr = (group as NSString).substring(with: from.range)
             var scanner = Scanner(string: fromStr)
-            scanner.scanDouble(&h)
-            scanner.scanString(":", into: nil)
-            scanner.scanDouble(&m)
-            scanner.scanString(":", into: nil)
-            scanner.scanDouble(&s)
-            scanner.scanString(",", into: nil)
-            scanner.scanDouble(&c)
+            if #available(iOS 13.0, *) {
+                h = scanner.scanDouble() ?? 0.0
+                scanner.scanString(":", into: nil)
+                m = scanner.scanDouble() ?? 0.0
+                scanner.scanString(":", into: nil)
+                s = scanner.scanDouble() ?? 0.0
+                scanner.scanString(",", into: nil)
+                c = scanner.scanDouble() ?? 0.0
+            } else {
+                scanner.scanDouble(&h)
+                scanner.scanString(":", into: nil)
+                scanner.scanDouble(&m)
+                scanner.scanString(":", into: nil)
+                scanner.scanDouble(&s)
+                scanner.scanString(",", into: nil)
+                scanner.scanDouble(&c)
+            }
+            
             let fromTime = (h * 3600.0) + (m * 60.0) + s + (c / 1000.0)
             
             let toStr = (group as NSString).substring(with: to.range)
             scanner = Scanner(string: toStr)
-            scanner.scanDouble(&h)
-            scanner.scanString(":", into: nil)
-            scanner.scanDouble(&m)
-            scanner.scanString(":", into: nil)
-            scanner.scanDouble(&s)
-            scanner.scanString(",", into: nil)
-            scanner.scanDouble(&c)
+            if #available(iOS 13.0, *) {
+                h = scanner.scanDouble() ?? 0.0
+                scanner.scanString(":", into: nil)
+                m = scanner.scanDouble() ?? 0.0
+                scanner.scanString(":", into: nil)
+                s = scanner.scanDouble() ?? 0.0
+                scanner.scanString(",", into: nil)
+                c = scanner.scanDouble() ?? 0.0
+            } else {
+                scanner.scanDouble(&h)
+                scanner.scanString(":", into: nil)
+                scanner.scanDouble(&m)
+                scanner.scanString(":", into: nil)
+                scanner.scanDouble(&s)
+                scanner.scanString(",", into: nil)
+                scanner.scanDouble(&c)
+            }
             let toTime = (h * 3600.0) + (m * 60.0) + s + (c / 1000.0)
             
             // Get text & check if empty
