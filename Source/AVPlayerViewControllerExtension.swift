@@ -8,6 +8,7 @@
 
 import AVKit
 
+#if os(iOS)
 public extension AVPlayerViewController {
     
     private struct AssociatedKeys {
@@ -145,3 +146,4 @@ public extension AVPlayerViewController {
     }
     
 }
+#endif
