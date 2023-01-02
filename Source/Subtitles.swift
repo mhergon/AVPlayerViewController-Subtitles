@@ -8,6 +8,13 @@
 
 import AVKit
 
+enum SubtitleType {
+    case srt
+    case ass
+    case ssa
+    case unknown
+}
+
 public class Subtitles {
 
     // MARK: - Private properties
@@ -16,11 +23,32 @@ public class Subtitles {
     
     // MARK: - Public methods
     
-    public init(file filePath: URL, encoding: String.Encoding = .utf8) throws {
-        // Get string
-        let string = try String(contentsOf: filePath, encoding: encoding)
-        // Parse string
-        parsedPayload = try Subtitles.parseSubRip(string)
+    public init(file filePath: URL, type: SubtitleType = .srt, encoding: String.Encoding = .utf8) throws {
+        do {
+            let str = try String(contentsOf: filePath, encoding: encoding)
+            switch type {
+            case .srt:
+                parsedPayload = try Subtitles.parseSRT(str)
+            case .ssa, .ass:
+                parsedPayload = try Subtitles.parseSSA(str)
+            case .unknown:
+                parsedPayload = nil
+            }
+        } catch {
+            do {
+                let str = try String(contentsOf: filePath, encoding: .gb2312)
+                switch type {
+                case .srt:
+                    parsedPayload = try Subtitles.parseSRT(str)
+                case .ssa, .ass:
+                    parsedPayload = try Subtitles.parseSSA(str)
+                case .unknown:
+                    parsedPayload = nil
+                }
+            } catch {
+                parsedPayload = nil
+            }
+        }
     }
     
     public init(subtitles string: String) throws {
@@ -40,13 +68,79 @@ public class Subtitles {
 
 extension Subtitles {
     
-    // MARK: - Static methods
+    static func parseSSA(_ payload: String) throws -> NSDictionary? {
+        var payload = payload.replacingOccurrences(of: "\n\r\n", with: "\n\n")
+        payload = payload.replacingOccurrences(of: "\n\n\n", with: "\n\n")
+        payload = payload.replacingOccurrences(of: "\r\n", with: "\n")
         
-    /// Subtitle parser
-    ///
-    /// - Parameter payload: Input string
-    /// - Returns: NSDictionary
-    static func parseSubRip(_ payload: String) throws -> NSDictionary? {
+        let parsed = NSMutableDictionary()
+        let formatRegex = try! NSRegularExpression(pattern: "\\[Events\\]\\nFormat:.+", options: .caseInsensitive)
+        let formatMatches = formatRegex.matches(in: payload,
+                                              options: NSRegularExpression.MatchingOptions(rawValue: 0),
+                                              range: NSMakeRange(0, payload.count))
+        let formatLine = (payload as NSString).substring(with: formatMatches.first!.range)
+        let commaCount = formatLine.components(separatedBy: ",").count - 1
+
+        let lineRegex = try! NSRegularExpression(pattern: ".+(\\d+:\\d+:\\d+\\.\\d+,).+", options: .caseInsensitive)
+        let allMatches = lineRegex.matches(in: payload,
+                                    options: NSRegularExpression.MatchingOptions(rawValue: 0),
+                                    range: NSMakeRange(0, payload.count))
+        var index = 0
+        for linematch in allMatches {
+            index += 1
+            let eachline = (payload as NSString).substring(with: linematch.range)
+            let timeRegex = try! NSRegularExpression(pattern: "\\d+:\\d+:\\d+\\.\\d+", options: .caseInsensitive)
+            let timeMatches = timeRegex.matches(in: eachline,
+                                                options: NSRegularExpression.MatchingOptions(rawValue: 0),
+                                                range: NSMakeRange(0, eachline.count))
+            let fromString = (eachline as NSString).substring(with: timeMatches.first!.range)
+            let toString = (eachline as NSString).substring(with: timeMatches[1].range)
+            print("from:"+fromString)
+            print("to:"+toString)
+            let nontextRegex = try! NSRegularExpression(pattern: "(.*?,){\(commaCount)}", options: .caseInsensitive)
+            let nontextMatches = nontextRegex.matches(in: eachline, range: NSMakeRange(0, eachline.count))
+            let nontextRange = nontextMatches.first!.range
+            let nontextLocation = nontextRange.location
+            let nontextLength = nontextRange.length
+            let textIndex = String.Index(utf16Offset: nontextLength+nontextLocation, in: eachline)
+            let textString = eachline[textIndex...]
+            let resultText = String(textString)
+                .removeCurlyBracketsStrings()
+                .replacingOccurrences(of: #"\N"#, with: "\n")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            print(resultText)
+            
+            var h: TimeInterval = 0.0, m: TimeInterval = 0.0, s: TimeInterval = 0.0, c: TimeInterval = 0.0
+            
+            var scanner = Scanner(string: fromString)
+            h = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(":")
+            m = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(":")
+            s = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(",")
+            c = scanner.scanDouble() ?? 0
+            
+            let fromTime = (h * 3600.0) + (m * 60.0) + s + (c / 1000.0)
+            
+            scanner = Scanner(string: toString)
+            h = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(":")
+            m = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(":")
+            s = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(",")
+            c = scanner.scanDouble() ?? 0
+            let toTime = (h * 3600.0) + (m * 60.0) + s + (c / 1000.0)
+            let final = NSMutableDictionary()
+            final["from"] = fromTime
+            final["to"] = toTime
+            final["text"] = resultText
+            parsed[index] = final
+        }
+        return parsed
+    }
+    static func parseSRT(_ payload: String) throws -> NSDictionary? {
         // Prepare payload
         var payload = payload.replacingOccurrences(of: "\n\r\n", with: "\n\n")
         payload = payload.replacingOccurrences(of: "\n\n\n", with: "\n\n")
@@ -59,7 +153,6 @@ extension Subtitles {
         let regexStr = "(\\d+)\\n([\\d:,.]+)\\s+-{2}\\>\\s+([\\d:,.]+)\\n([\\s\\S]*?(?=\\n{2,}|$))"
         let regex = try NSRegularExpression(pattern: regexStr, options: .caseInsensitive)
         let matches = regex.matches(in: payload, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, payload.count))
-        
         for m in matches {
             let group = (payload as NSString).substring(with: m.range)
             
@@ -89,45 +182,25 @@ extension Subtitles {
             
             let fromStr = (group as NSString).substring(with: from.range)
             var scanner = Scanner(string: fromStr)
-            if #available(iOS 13.0, *) {
-                h = scanner.scanDouble() ?? 0.0
-                scanner.scanString(":", into: nil)
-                m = scanner.scanDouble() ?? 0.0
-                scanner.scanString(":", into: nil)
-                s = scanner.scanDouble() ?? 0.0
-                scanner.scanString(",", into: nil)
-                c = scanner.scanDouble() ?? 0.0
-            } else {
-                scanner.scanDouble(&h)
-                scanner.scanString(":", into: nil)
-                scanner.scanDouble(&m)
-                scanner.scanString(":", into: nil)
-                scanner.scanDouble(&s)
-                scanner.scanString(",", into: nil)
-                scanner.scanDouble(&c)
-            }
+            h = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(":")
+            m = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(":")
+            s = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(",")
+            c = scanner.scanDouble() ?? 0
             
             let fromTime = (h * 3600.0) + (m * 60.0) + s + (c / 1000.0)
             
             let toStr = (group as NSString).substring(with: to.range)
             scanner = Scanner(string: toStr)
-            if #available(iOS 13.0, *) {
-                h = scanner.scanDouble() ?? 0.0
-                scanner.scanString(":", into: nil)
-                m = scanner.scanDouble() ?? 0.0
-                scanner.scanString(":", into: nil)
-                s = scanner.scanDouble() ?? 0.0
-                scanner.scanString(",", into: nil)
-                c = scanner.scanDouble() ?? 0.0
-            } else {
-                scanner.scanDouble(&h)
-                scanner.scanString(":", into: nil)
-                scanner.scanDouble(&m)
-                scanner.scanString(":", into: nil)
-                scanner.scanDouble(&s)
-                scanner.scanString(",", into: nil)
-                scanner.scanDouble(&c)
-            }
+            h = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(":")
+            m = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(":")
+            s = scanner.scanDouble() ?? 0
+            _ = scanner.scanString(",")
+            c = scanner.scanDouble() ?? 0
             let toTime = (h * 3600.0) + (m * 60.0) + s + (c / 1000.0)
             
             // Get text & check if empty
@@ -169,4 +242,8 @@ extension Subtitles {
         return text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
     
+}
+
+extension String.Encoding {
+    static let gb2312 = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
 }
