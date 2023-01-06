@@ -47,6 +47,10 @@ let videoFile = Bundle.main.path(forResource: "trailer_720p", ofType: "mov")
 let subtitleFile = Bundle.main.path(forResource: "trailer_720p", ofType: "srt")
 let subtitleURL = URL(fileURLWithPath: subtitleFile!)
 
+// Subtitle file of ass type
+let subtitleFileASS = Bundle.main.path(forResource: "The Hobbit An Unexpected Journey 2012 1080p Blu-ray Remux AVC DTS-HD MA 7.1 - KRaLiMaRKo.简英1", ofType: "ass")
+let subtitleURLASS = URL(fileURLWithPath: subtitleFileASS!)
+
 // Movie player
 let moviePlayer = AVPlayerViewController()
 moviePlayer.player = AVPlayer(url: URL(fileURLWithPath: videoFile!))
@@ -82,7 +86,7 @@ let subtitleFile = Bundle.main.path(forResource: "trailer_720p", ofType: "srt")
 let subtitleURL = URL(fileURLWithPath: subtitleFile!)
 
 // Subtitle parser
-let parser = Subtitles(file: subtitleURL, encoding: .utf8)
+let parser = Subtitles(file: subtitleURL)
 
 // Do something with result
 let subtitles = parser.searchSubtitles(at: 2.0) // Search subtitle at 2.0 seconds

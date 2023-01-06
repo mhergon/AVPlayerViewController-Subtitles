@@ -46,11 +46,13 @@ class ViewController: UIViewController {
     
     func subtitleParser() {
         // Subtitle file
-        let subtitleFile = Bundle.main.path(forResource: "trailer_720p", ofType: "srt")
+        // let subtitleFile = Bundle.main.path(forResource: "trailer_720p", ofType: "srt")
+        // test ass parser
+        let subtitleFile = Bundle.main.path(forResource: "The Hobbit An Unexpected Journey 2012 1080p Blu-ray Remux AVC DTS-HD MA 7.1 - KRaLiMaRKo.简英1", ofType: "ass")
         let subtitleURL = URL(fileURLWithPath: subtitleFile!)
         
         // Subtitle parser
-        let parser = try? Subtitles(file: subtitleURL, encoding: .utf8)
+        let parser = try? Subtitles(file: subtitleURL, type: .ass)
         
         // Do something with result
         _ = parser?.searchSubtitles(at: 2.0) // Search subtitle at 2.0 seconds

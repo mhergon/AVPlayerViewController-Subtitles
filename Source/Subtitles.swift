@@ -22,21 +22,11 @@ public class Subtitles {
     private var parsedPayload: NSDictionary?
     
     // MARK: - Public methods
-    
-    public init(file filePath: URL, type: SubtitleType = .srt, encoding: String.Encoding = .utf8) throws {
+    init(file filePath: URL, type: SubtitleType = .srt, encoding: String.Encoding = .utf8) {
         do {
-            let str = try String(contentsOf: filePath, encoding: encoding)
-            switch type {
-            case .srt:
-                parsedPayload = try Subtitles.parseSRT(str)
-            case .ssa, .ass:
-                parsedPayload = try Subtitles.parseSSA(str)
-            case .unknown:
-                parsedPayload = nil
-            }
-        } catch {
-            do {
-                let str = try String(contentsOf: filePath, encoding: .gb2312)
+            let data = try Data(contentsOf: filePath)
+            // will auto encoding
+            if let str = String(data: data, encoding: data.stringEncoding ?? encoding) {
                 switch type {
                 case .srt:
                     parsedPayload = try Subtitles.parseSRT(str)
@@ -45,9 +35,9 @@ public class Subtitles {
                 case .unknown:
                     parsedPayload = nil
                 }
-            } catch {
-                parsedPayload = nil
             }
+        } catch {
+            parsedPayload = nil
         }
     }
     
@@ -244,6 +234,18 @@ extension Subtitles {
     
 }
 
-extension String.Encoding {
-    static let gb2312 = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
+extension Data {
+    var stringEncoding: String.Encoding? {
+        var nsString: NSString?
+        guard case let rawValue = NSString.stringEncoding(for: self, encodingOptions: nil, convertedString: &nsString, usedLossyConversion: nil), rawValue != 0 else { return nil }
+        return .init(rawValue: rawValue)
+    }
+}
+
+extension String {
+    func removeCurlyBracketsStrings() -> String {
+        let regex = try! NSRegularExpression(pattern: "\\{.*?\\}")
+        let mod = regex.stringByReplacingMatches(in: self, range: NSMakeRange(0, self.count), withTemplate: "")
+        return mod
+    }
 }
