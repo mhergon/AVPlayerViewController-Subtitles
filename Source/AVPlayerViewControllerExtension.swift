@@ -105,7 +105,7 @@ public extension AVPlayerViewController {
             }
             let text = Subtitles.searchSubtitles(strongSelf.parsedPayload, time.seconds)
             // Search && show subtitles
-            if let textBackgroundColorKey = textBackgroundColorKey, let text = text {
+            if let textBackgroundColorKey = strongSelf.textBackgroundColorKey, let text = text {
                 label.attributedText = NSAttributedString(string: text, attributes: [.backgroundColor: textBackgroundColorKey, .foregroundColor: UIColor.white])
             } else {
                 label.text = text
