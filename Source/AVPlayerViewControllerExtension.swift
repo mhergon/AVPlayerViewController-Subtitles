@@ -14,6 +14,7 @@ public extension AVPlayerViewController {
     private struct AssociatedKeys {
         static var FontKey = "FontKey"
         static var ColorKey = "FontKey"
+        static var TextBackgroundColorKey = "TextBackgroundColorKey"
         static var SubtitleKey = "SubtitleKey"
         static var SubtitleHeightKey = "SubtitleHeightKey"
         static var PayloadKey = "PayloadKey"
@@ -24,6 +25,11 @@ public extension AVPlayerViewController {
     var subtitleLabel: UILabel? {
         get { return objc_getAssociatedObject(self, &AssociatedKeys.SubtitleKey) as? UILabel }
         set (value) { objc_setAssociatedObject(self, &AssociatedKeys.SubtitleKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+    
+    var textBackgroundColorKey: UIColor? {
+        get { return objc_getAssociatedObject(self, &AssociatedKeys.TextBackgroundColorKey) as? UIColor }
+        set (value) { objc_setAssociatedObject(self, &AssociatedKeys.TextBackgroundColorKey, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
     
     // MARK: - Private properties
@@ -97,9 +103,13 @@ public extension AVPlayerViewController {
             guard let strongSelf = self, let label = strongSelf.subtitleLabel else {
                 return
             }
-            
+            let text = Subtitles.searchSubtitles(strongSelf.parsedPayload, time.seconds)
             // Search && show subtitles
-            label.text = Subtitles.searchSubtitles(strongSelf.parsedPayload, time.seconds)
+            if let textBackgroundColorKey = strongSelf.textBackgroundColorKey, let text = text {
+                label.attributedText = NSAttributedString(string: text, attributes: [.backgroundColor: textBackgroundColorKey, .foregroundColor: UIColor.white])
+            } else {
+                label.text = text
+            }
             
             // Adjust size
             let baseSize = CGSize(width: label.bounds.width, height: .greatestFiniteMagnitude)
