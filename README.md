@@ -28,6 +28,7 @@ pod 'AVPlayerViewController-Subtitles'
 
 | Version | Language  | Minimum iOS Target  |
 |:--------------------:|:---------------------------:|:---------------------------:|
+|          1.4.x         |            Swift 5.0            |            iOS 12            |
 |          1.3.x         |            Swift 5.0            |            iOS 8            |
 |          1.2.x         |            Swift 3.0            |            iOS 8            |
 |          1.0.x         |            Swift 2.x           |            iOS 8            |
