@@ -311,10 +311,13 @@
 				TargetAttributes = {
 					4B4FC9551C2A9D60002AE636 = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = 4QLBP9JQH2;
 						LastSwiftMigration = 1320;
+						ProvisioningStyle = Automatic;
 					};
 					AF68243D286156B300844C7D = {
 						CreatedOnToolsVersion = 13.4.1;
+						DevelopmentTeam = 4QLBP9JQH2;
 						ProvisioningStyle = Automatic;
 					};
 					AF682442286156B300844C7D = {
@@ -592,10 +595,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4QLBP9JQH2;
 				INFOPLIST_FILE = "AVPlayerViewController-Subtitles/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles.demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 			};
@@ -605,10 +613,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4QLBP9JQH2;
 				INFOPLIST_FILE = "AVPlayerViewController-Subtitles/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles.demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 			};
@@ -627,6 +640,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4QLBP9JQH2;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -640,7 +654,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.propgm.VideoPlayer;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles.demo";
 				PRODUCT_NAME = VideoPlayer;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -663,6 +677,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4QLBP9JQH2;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -675,7 +690,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.propgm.VideoPlayer;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles.demo";
 				PRODUCT_NAME = VideoPlayer;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -709,7 +724,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.propgm.VideoPlayer;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles.demo";
 				PRODUCT_NAME = VideoPlayer;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -741,7 +756,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.propgm.VideoPlayer;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles.demo";
 				PRODUCT_NAME = VideoPlayer;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -767,7 +782,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.propgm.Tests-iOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -794,7 +809,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.propgm.Tests-iOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -821,7 +836,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.propgm.Tests-macOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -848,7 +863,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.propgm.Tests-macOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mhergon.AVPlayerViewController-Subtitles.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = NO;

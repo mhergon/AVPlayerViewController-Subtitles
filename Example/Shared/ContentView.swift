@@ -40,6 +40,9 @@ struct ContentView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .onAppear {
+            avplayer.play()
+        }
     }
 }
 

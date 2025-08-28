@@ -18,7 +18,7 @@ class ViewController: UIViewController {
         let videoFile = Bundle.main.path(forResource: "trailer_720p", ofType: "mov")
                 
         // Remote subtitle file
-        let subtitleRemoteUrl = URL(string: "https://raw.githubusercontent.com/furkanhatipoglu/AVPlayerViewController-Subtitles/master/Example/AVPlayerViewController-Subtitles/trailer_720p.srt")
+        //let subtitleRemoteUrl = URL(string: "https://raw.githubusercontent.com/furkanhatipoglu/AVPlayerViewController-Subtitles/master/Example/AVPlayerViewController-Subtitles/trailer_720p.srt")
         
         // Movie player
         let moviePlayer = AVPlayerViewController()
@@ -26,8 +26,8 @@ class ViewController: UIViewController {
         present(moviePlayer, animated: true, completion: nil)
         
 //        // Local subtitle file
-//        let subtitleFile = Bundle.main.path(forResource: "trailer_720p", ofType: "srt")
-//        let subtitleURL = URL(fileURLWithPath: subtitleFile!)
+        let subtitleFile = Bundle.main.path(forResource: "trailer_720p", ofType: "srt")
+        let subtitleURL = URL(fileURLWithPath: subtitleFile!)
 //        
 //        // Add subtitles - local
 //        moviePlayer.addSubtitles().open(fileFromLocal: subtitleURL)
@@ -35,13 +35,14 @@ class ViewController: UIViewController {
         
         // Add subtitles - remote
         moviePlayer.addSubtitles()
-        moviePlayer.open(fileFromRemote: subtitleRemoteUrl!)
+        moviePlayer.open(fileFromRemote: subtitleURL)
         
         // Change text properties
         moviePlayer.subtitleLabel?.textColor = UIColor.red
         
         // Play
         moviePlayer.player?.play()
+        
     }
     
     func subtitleParser() {

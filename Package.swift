@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "AVPlayerViewController-Subtitles",
     platforms: [
-      .iOS(.v8), .tvOS(.v9), .macOS(.v10_15)
+      .iOS(.v12), .tvOS(.v12), .macOS(.v12)
     ],
     products: [
         .library(
